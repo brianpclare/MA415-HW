@@ -1,0 +1,270 @@
+---
+title: "Simple R Functions "
+author: ""
+date: "January 26, 2018"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### 1.
+
+(a) Write functions \texttt{tmpFn1} and \texttt{tmpFn2} such that if \texttt{xVec} is the vector $(x_1, x_2, ... ,x_n)$, then \texttt{tmpFn1(xVec)} returns vector $(x_1, x_2^2, ..., x_n^n)$ and \texttt{tmpFn2(xVec)} returns the vector $(x_1, \frac{x_2^2}{2}, ..., \frac{x_n^n}{n})$.
+
+******
+
+Here is \texttt{tmpFn1}
+```{r}
+
+tmpFn1 <- function(xVec){
+  return(xVec^(1:length(xVec)))
+}
+
+## simple example
+a <- c(2, 5, 3, 8, 2, 4)
+
+b <- tmpFn1(a)
+b
+
+```
+
+tmpFn1 <- function(xVec)
+{
+  return(xVec^(1:length(xVec)))
+}
+
+and now \texttt{tmpFn2}
+
+```{r}
+tmpFn2 <- function(xVec2){
+  
+  n = length(xVec2)
+  
+  return(xVec2^(1:n)/(1:n))
+}
+
+
+
+c <- tmpFn2(a)
+c
+
+
+```
+
+tmpFn2 <- function(xVec2)
+{
+  n = length(xVec2)
+  return(xVec2^(1:n)/(1:n))
+}
+
+
+######  
+  
+  
+  
+(b) Now write a fuction \texttt{tmpFn3} which takes 2 arguments $x$ and $n$ where $x$ is a single number and $n$ is a strictly positive integer.  The function should return the value of   
+$$1 + \frac{x}{1} + \frac{x^2}{2} + \frac{x^3}{3} + ... + \frac{x^n}{n}$$
+tmpFn3 <- function(xVec3){
+  n = length(xVec3)
+  return(1+sum(xVec3^(1:n)/(1:n)))
+}
+
+\newpage
+### 2. Write a funciton \texttt{tmpFn(xVec)} such that if \texttt{xVec} is the vector $x = (x_1, ...,x_n)$ then \texttt{tmpFn(xVec)} returns the vector of moving averages:
+
+$$\frac{x_1 + x_2 + x_3}{3}, \frac{x_2 + x_3 + x_4}{3}, ...,\frac{x_{n-2} + x_{n-1} + x_n}{3}$$
+
+Try out your function.  \texttt{tmpFn}(c(1:5,6:1))
+
+tmpFn <- function(xVec){
+  n <- length(xVec)
+  (xVec[-c(n-1, n)] + xVec[-c(1, n)] + xVec[-c(1, 2)]) / 3
+}
+
+### 3. Consider the continuous function
+
+$$f(x) = \left\{\begin{matrix}
+x^2 + 2x + 3 & if  & x < 0 \\ 
+x + 3 & if & 0 \leq x < 2 \\ 
+x^2 + 4x - 7 & if & 2 \leq  x 
+\end{matrix}\right.$$
+
+Write a function \texttt{tmpFn} which takes a single argument \texttt{xVec}.  the function should return the vector the values of the function $f(x)$ evaluated at the values in \texttt{xVec}.  
+Hence plot the function $f(x)$ for $-3 < x <3$.
+
+tmpFn <- function(x){
+  ifelse(x<0, x^2 + 2*x + 3, ifelse(x<2, x+3, x^2 + 4*x - 7))
+}
+tmp <- seq(-3, 3, len=100)
+plot(tmp, tmpFn(tmp))
+
+### 4. Write a function which takes a single argument which is a matrix.  The function should return a matrix which is the same as the function argument but every odd number is doubled.  
+Hence the result of using the function on the matrix   
+
+$$\begin{bmatrix}
+1 & 1 & 3\\ 
+5 & 2 & 6\\ 
+-2 & -1 & -3
+\end{bmatrix}$$
+
+should be:
+
+$$\begin{bmatrix}
+2 & 2 & 6\\ 
+10 & 2 & 6\\ 
+-2 & -2 & -6
+\end{bmatrix}$$
+
+tmpFn <- function(mat){
+  mat[mat%%2 == 1] <- 2 * mat[mat%%2 == 1]
+  mat
+}
+
+### 5. Write a function which takes 2 arguements $n$ and $k$ which are positive integers.  It should return the $\mathit{n} x \mathit{n}$ matrix:
+
+
+$$\begin{bmatrix}
+k & 1 & 0 & 0 & \cdots  & 0 & 0\\ 
+1 & k & 1 & 0 & \cdots  & 0 & 0\\
+0 & 1 & k & 1 & \cdots  & 0 & 0\\
+0 & 0 & 1 & k & \cdots  & 0 & 0\\
+\cdot & \cdot & \cdot & \cdot & \cdot & \cdot & \cdot\\ 
+0 & 0 & 0 & 0 & \cdots  & k & 1\\
+0 & 0 & 0 & 0 & \cdots  & 1 & k
+\end{bmatrix}$$
+
+tmpFn <- function(n, k){
+  tmp <- diag(k, nr = n)
+  tmp[abs(row(tmp) - col(tmp)) == 1] <- 1
+  tmp
+}
+
+### 6. Suppose an angle $\alpha$ is given as a positive real number of degrees.  
+If $0 \leq \alpha < 90$ then it is quadrant 1.  If $90 \leq \alpha < 180$ then it is quadrant 2.  
+if $180 \leq \alpha < 270$ then it is quadrant3.  if $270 \leq \alpha < 360$ then it is quadrant 4.  
+if $360 \leq \alpha < 450$ then it is quadrant 1.  
+And so on ...   
+
+Write a function \texttt{quadrant(alpha)} which returns the quadrant of the angle $\alpha$.
+
+quadrant <- function(alpha){
+  1 + floor(alpha/90)%%4
+}
+
+### 7.
+
+(a) Zeller's congruence is the formula:
+
+$$ f = ([2.6m - 0.2] + k + y + [y/4] + [c/4] - 2c)mod 7 $$
+where $[x]$ denotes the integer part of $x$; for example $[7.5] = 7$.  
+
+Zeller's congruence returns the day of the week $f$ given:
+
+$k$ = the day of the month  
+$y$ = the year in the century  
+$c$ = the first 2 digits of the year (the century number)  
+$m$ = the month number (where January is month 11 of the preceding year, February is month 12 of the preceding year, March is month 1, etc.)   
+For example, the date 21/07/1`963 has $m = 5, k = 21, c = 19, y = 63$;  
+the date 21/2/63 has $m=12, k=21, c=19, and y=62$.  
+Write a function \texttt{weekday(day,month,year)} which returns the day of the week when given the numerical inputs of the day, month and year.  
+Note that the value of 1 for $f$ denotes Sunday, 2 denotes Monday, etc.
+
+weekday <- function(day, month, year)
+{
+  month <- month - 2
+  if(month <= 0){
+    month <- month + 12
+    year <- year - 1
+  }
+  cc <- year %% 100
+  year <- year %% 100
+  tmp <- floor(2.6*month - 0.2) + day + year + year %% 4 + cc %% 4 - 2 * cc
+  c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")[1 + tmp%%7]
+}
+
+(b) Does your function work if the input parameters \text{day, month, and year} are vectors with the same length and valid entries?
+
+weekday2 <- function(day, month, year){
+  flag <- month <= 2
+  month <- month - 2 + 12 * flag
+  year <- year - flag
+  cc <- year %% 100
+  year <- year %% 100
+  tmp <- floor(2.6 * month - 0.2) + day + year + year %% 4 + cc %% 4 - 2*cc
+  c("Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday")[1 + tmp%%7]
+}
+
+###8.
+
+(a).
+testLoop <- function(n){
+  xVec <- rep(NA, n-1)
+  xVec[1] <- 1
+  xVec[2] <- 2
+  for(j in 3:(n-1) )
+    xVec[j] <- xVec[j-1] + 2/xVec[j-1]
+  xVec
+}
+
+(b).
+
+testLoop2 <- function(yVec){
+  n <- length(yVec)
+  sum(exp(1:n))
+}
+
+
+###9.
+
+(a).
+quadmap <- function(start, rho, niter){
+  xVec <- rep(NA, nither)
+  xVec[1] <- start
+  for(i in 1:(nither-1)){
+    xVec[i+1] <- rho * xVec[i] * (1-xVec[i])
+  }
+  x
+}
+
+(b).
+quad2 <- function(start, rho, eps = 0.02){
+  x1 <- start
+  x2 <- rho*x1*(1-x1)
+  nither <- 1
+  while(abs(x1-x2) >= eps){
+    x1 <- x2
+    x2 <- rho*x1*(1-x1)
+    niter <- niter + 1
+  }
+  niter
+}
+
+### 10.
+(a).
+
+tmpAcf <- function(xVec){
+  xc <- xVec - mean(xVec)
+  denom <- sum(xc^2)
+  n <- length(x)
+  r1 <- sum(xc[2:n] * xc[1:(n-1)])/denom
+  r2 <- sum(xc[3:n] * xc[1:(n-2)])/denom
+  list(r1 = r1, r2 = r2)
+}
+
+(b).
+
+tmpAcf <- function(x, k){
+  xc <- x - mean(x)
+  denom <- sum(xc^2)
+  n <- length(x)
+  tmpFn <- function(j){sum(xc[(j+1):n] * xc[1:(n-j)])/denom }
+  c(1, sapply(1:k, tmpFn))
+}
+
+
+
+
+
+
