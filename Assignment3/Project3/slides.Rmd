@@ -1,0 +1,204 @@
+---
+title: "MA415 Project 1"
+author: "Lin Li, Lingjia Zhang, Zirui Liu"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+## Background
+According to the CNN news, apprehensions at the US-Mexico border reached the historic low rate in April 2017, and have a continuing downward trend during the first few months of the Trump administration. The drop of the apprehension rate was interpreted as the sign of “President Donald Trump’s rhetoric and aggressive push to enforce immigration laws is having an effect.” Through this project, we want to analyze by using past data to estimate whether the declining rate of apprehension relates to the President Donald’s new law.
+
+## Datasets
+- BP Apprehensions 2010.csv
+- BP Apprehensions 2017.csv
+- BP monthly summaries.csv
+
+## Data Visualization
+```{r,echo=FALSE}
+T2010 <- read.csv("/Users/mac/Desktop/MA415/assignment3/bp appre 2010.csv")
+T2017 <- read.csv("/Users/mac/Desktop/MA415/assignment3/bp appre 2017.csv")
+
+rownames(T2010) <- T2010[,1]
+rownames(T2017) <- T2017[,1]
+
+# sum apprehensions of sector and month in 2010
+T2010 <- subset(T2010, select = -c(Sector))
+# sort month in order 
+T2010 <- cbind(subset.data.frame(T2010)[,4:12],subset.data.frame(T2010)[,1:3])
+monthSum2010 <- colSums((T2010))
+T2010 <- rbind(T2010,monthSum2010)
+rownames(T2010)[10] <- "Sector Total"
+
+sectorSum2010 <- rowSums(T2010)
+T2010 <- cbind(T2010,sectorSum2010)
+colnames(T2010)[13] <- "Month Total" 
+
+# sum apprehensions of sector and month in 2017
+T2017 <- subset(T2017, select = -c(Sector))
+# sort month in order
+T2017 <- cbind(subset.data.frame(T2017)[,4:12],subset.data.frame(T2017)[,1:3])
+monthSum2017 <- colSums((T2017))
+T2017 <- rbind(T2017,monthSum2017)
+rownames(T2017)[10] <- "Sector Total"
+
+sectorSum2017 <- rowSums(T2017)
+T2017 <- cbind(T2017,sectorSum2017)
+colnames(T2017)[13] <- "Month Total" 
+
+#compare apprehensions by months
+sector <- rownames(T2010)
+month <- colnames(T2010)
+
+#The function takes in the index of the sector as input
+plot_by_months <- function(i){ 
+  year <- rbind(T2010[i,1:12],T2017[i,1:12])
+  barplot(as.matrix(year), beside = T, col = c("red", "yellow"), bty="n",las=2,
+          main = "Compare Apprehensions Between 2010&2017 by Months")
+  legend("topright", 
+         c(paste(sector[i] ,"2010"),paste(sector[i],"2017")), 
+         pch=15,  
+         col=c("red","yellow"),  
+         bty="n"
+         )
+}
+
+#The function takes in month as input
+plot_by_sectors <- function(i){
+  T2010<-t(T2010)
+  T2017<-t(T2017)
+  year <- rbind(T2010[i,1:9],T2017[i,1:9])
+  getOption("scipen")
+  opt <- options("scipen" = 20)
+  barplot(year, beside = TRUE, col = c("red", "yellow"), bty="n",las=2,
+          main = "Compare Apprehensions between 2010&2017 by Sectors"
+          )
+  legend("topleft", 
+         c(paste(month[i] ,"2010"),
+           paste(month[i],"2017")),
+         pch=15,  
+         col=c("red", "yellow"),  
+         bty="n")
+}
+```
+
+1. Based on csv files, we compare the apprehensions by sectors and months between 2010 and 2017. First of all, we sum up apprehensions by sectors and create the following plot.
+```{r}
+plot_by_sectors(13)
+```
+
+2. Second of all, we sum up apprehensions by months and create the following plot.
+```{r}
+plot_by_months(10)
+```
+
+Based on these two graphs, it is easy to conclude that in 2010, Tucson has the most apprehensions. In 2017, Rio Grande Valley has the most apprehensions. In 2010, from March to May, there are most apprehensions. In 2017, from October to December, there are most apprehensions.
+
+###### need website!!!!! ####
+
+# Statistic Analysis
+
+## First problem
+
+Use simple statistical tests linke those demonstrated in class to compare the sector with the most apprehensions for 2010 and with the sector with the most apprehensions in 2017. Has there been a change in the maximum?
+```{r}
+#In 2010, the sector that has most apprehensions is Tucson
+most_2010 <- match(max(T2010[1:9,13]), T2010[1:9,13])
+rownames(T2010)[most_2010]
+
+#In 2017, the sector that has most apprehensions is Rio Grande Valley
+most_2017 <- match(max(T2017[1:9,13]), T2017[1:9,13])
+rownames(T2017)[most_2017]
+```
+To evaluate wheter the most apprehensions between 2010(Tucson) and 2017(Rio Grande Valley),we have following null hypothesis and alternative hypothesis:
+
+$$H_{0}:\mu _{Tucson, 2010} - \mu _{RGV, 2017} = 0$$
+$$H_{a}:\mu _{Tucson, 2010} - \mu _{RGV, 2017} \neq  0$$
+
+```{r,echo=FALSE}
+# table for Tucson
+T2010_Tuson <- T2010[most_2010,1:12]
+# table for Rio Grande Valley
+T2017_RGV <- T2017[most_2017,1:12]
+
+# test if they have same sample mean 
+t.test(T2010_Tuson, T2017_RGV)
+```
+From t-test, we get p-value = 0.06346 > 0.05, and we fail to reject the null hypothesis.  At significance level of 5%, the mean of apprehension of Tucson in 2010 is equal to the mean of apprehension of Rio Grande Valley in 2017. Thus, there is no significant difference between the maximum of apprehensions by secoter in 2010 and 2017.
+
+
+## Second problem
+
+From the grpah, we know that in 2010, March, April, and May are ranking top 3. In 2017, 
+November, October, and December are ranking top 3. The statistic analysis we want to 
+evaluate is whether the mean of 3-month highest apprehensions has changed.
+```{r}
+# In 2010, March, April,and May have the most apprehensions
+top3_2010 <- order(T2010[10,1:12], decreasing = TRUE)[1:3]
+colnames(T2010)[top3_2010]
+
+# In 2017, November, October,and December have the most apprehensions
+top3_2017 <- order(T2017[10,1:12], decreasing = TRUE)[1:3]
+colnames(T2017)[top3_2017]
+```
+  
+Null hypothesis and alternative hypothesis:
+$$H_{0}:\mu _{3 months, 2010} - \mu _{3 months, 2017} = 0$$
+$$H_{a}:\mu _{3 months, 2010} - \mu _{3 months, 2017} \neq  0$$
+
+```{r,echo=FALSE}
+# table for March, April, and May in 2010
+T2010_3m <- T2010[top3_2010,1:12]
+# table for November, October, and December in 2017
+T2017_3m <- T2017[top3_2017,1:12]
+
+# test if they have same sample mean 
+t.test(T2010_3m, T2017_3m)
+```
+From t-test, we get p-value = 0.3454 > 0.05, and we fail to reject the null hypothesis. At significance level of 5%, the mean of apprehensions from March to May in 2010 is equal to the mean of apprehensions from October to December in 2017. Thus, there is no significance difference betweeen maximum of apprehensions from March to May in 2010 and from October to December in 2017.
+
+
+## Time series
+
+```{r,echo=FALSE}
+ts1 <- read.csv("/Users/mac/Desktop/MA415/assignment3/PB monthly summaries.csv")
+#delete first column
+ts2 <- ts1[2:13]
+#rearrange the columns by moving Oct, Nov, and Dec to the end 
+ts3 <- cbind(subset.data.frame(ts2)[,4:12],subset.data.frame(ts2)[,1:3])
+#reverse data 
+ts4 <- ts3[ nrow(ts3):1, ]
+#turn it to vectors 
+ts5 <- as.vector(t(ts4))
+#create time series 
+ts6 <- ts(ts5,frequency=12,start=c(2000,1))
+#plot time series
+ts.plot(ts6, gpars=list(main ="Time Series Chart of Apprehensions from 2000 to 2017",xlab="year", ylab="Apprehensions", col= "black", lty=c(1:3)))
+#caculate annual averages
+ts_avg <- apply(ts4,1,mean)
+#create annual averages in time series
+ts_avg<-ts(ts_avg,start = c(2000.5), frequency=1)
+
+#create segments and text for annual averages
+#for (i in 1:18) {
+# segments(1999+i,ts_avg[i],2000+i,ts_avg[i],col = 2,lwd = 1)
+#text(2000.3 + i, ts_avg[i], labels = 1999+i, cex=0.6, col = "red" , font=1)
+#}
+#create points and connected dashed line for better visualization
+points(ts_avg,col = "blue", pch=20)
+lines(ts_avg,col = "blue", pch=20,lty=6)
+#create legends
+legend(2010,220000, legend = c("Monthly Apprehensions","Annual Averages by points","Annual Average connected by dashed line"), 
+       col = c("black","blue", "blue"),pch =c(NA,20,NA),lty=c(1,NA,3), cex=0.6)
+
+```
+
+## Conclusion
+Through Time Series Chart of Apprehension from 2000 to 2017 above, we can observe that the decreasing trend happens long before the president Donald Trump was elected. Although we cannot deny that the new law might have some restrained effect on the drop of apprehension, the effect is limited. Then, the t-tests shows that the data through years are not significantly different. To get a better understanding of the US-Mexico border apprehensions, we need to obtain more data about the reasons that the apprehensions in each sector changes through months and years.
+
