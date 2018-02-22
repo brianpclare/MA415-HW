@@ -1,0 +1,242 @@
+---
+title: "Class 11: Start Section 2"
+subtitle: "The Tidyverse"
+author: "Haviland Wright"
+date: "February 11, 2018"
+output: slidy_presentation
+---
+
+```{r setup, include=FALSE}
+library(knitr)
+opts_chunk$set(echo = TRUE)
+```
+
+## Tidyverse: a process supported by R packages
+
+<br>
+
+<center>
+
+![Tidyverse proces](tv-proc.png)
+</center>
+
+- Install the tidyverse 
+
+- This week: visualization, transformation, exploration
+
+- Rectangular data: collections of values that are each associated with a variable and an observation. 
+
+- Focus on data exploration and  hypothesis generation. 
+
+## Reference material: tidyverse, ggplot2, dplyr, slidy {.smaller}
+<br>
+
+### Classes 11-19:\ The Tidyverse \ \ [tidyverse](https://www.tidyverse.org/) \ \ [Wickham's Tidy data article](http://bit.ly/2EjhQHm)
+
+### Today (Monday, 12 Feb 2018) \ \ [ggplot2](http://ggplot2.org/)
+\ \ \ \ \ \  [cran - ggplot2](https://cran.r-project.org/web/packages/ggplot2/index.html),\ \ [pkg - ggplot2](https://cran.r-project.org/web/packages/ggplot2/ggplot2.pdf),\ \ [tidyverse - ggplot2](http://ggplot2.tidyverse.org/),\ \  [cheatsheet - ggplot2](https://www.rstudio.com/wp-content/uploads/2015/03/ggplot2-cheatsheet.pdf)
+
+### Wednesday \  (14 Feb 2018) \ \  [dply](https://stackoverflow.com/tags/dplyr/info)  
+\ \ \ \ \ \ [cran - dplyr](https://cran.r-project.org/web/packages/dplyr/index.html), \ \ [pkg - dplyr](https://cran.r-project.org/web/packages/dplyr/dplyr.pdf),
+\ \ [tutorial - dplyr](https://rpubs.com/justmarkham/dplyr-tutorial), \ \ [tidyverse - dplyr ](http://dplyr.tidyverse.org/), \ \ [cheatsheet - dplyr](http://bit.ly/2EjLM60)
+
+
+
+
+
+### Slides:  [Slidy](https://rmarkdown.rstudio.com/slidy_presentation_format.html)  
+
+\ \ \ \ \ \ [rmarkdown (see slidy_presentation)](https://cran.r-project.org/web/packages/rmarkdown/rmarkdown.pdf)  
+
+\ \ \ \ \ \ [knitr](https://cran.r-project.org/web/packages/knitr/index.html), \ \ [knitr - yihui](https://yihui.name/knitr/), \ \ [knitr - cran](https://cran.r-project.org/web/packages/knitr/index.html), \ \ [knitr - doc](https://cran.r-project.org/web/packages/knitr/knitr.pdf)  
+
+\ \ \ \ \ \ [Pandoc](http://pandoc.org/index.html)  
+
+
+### And, on Friday ...
+
+##  Exploratory Data Analysis
+
+
+### Friday \  (16 Feb 2018) EDA 
+
+<center>   
+
+![EDA](EDA - book.jpg)
+</center>  
+
+
+## ggplot2: let's get started  {.smaller}
+
+We're using the mpg dataset that comes with ggplot2.   
+Use data() to review available datasets and ?mpg to access the doc for the mpg dataset.
+
+```{r echo=FALSE, message=FALSE}
+library(tidyverse)
+
+```
+
+The mpg dataset reports on `r dim(mpg)[1]` cars on `r dim(mpg)[2]` variables:  
+`r colnames(mpg)`  
+
+A small sample (note the table produced with knitr::kable())
+
+```{r}
+
+kable(mpg[c(2,30,50,100,100),])
+
+```
+  
+
+## ggplot()  The basic idea {.smaller}
+
+<center>
+
+ggplot(data = <DATA>) + 
+  <GEOM_FUNCTION>(mapping = aes(<MAPPINGS>))
+  
+</center>  
+
+### ggplot(data = mpg) makes an empty graph.  
+* Add layers to it with GEOM_FUNCTIONS.  
+
+* [List of GEOMs](http://bit.ly/2Em0BsV)  [Also, see ](http://bit.ly/2EiUH7P)
+
+* Each geom takes mapping argument which uses aes() to map the x and y axes.  
+
+* Add additional dimensions by mapping with color, shapes, size to other variables 
+
+
+
+## First Plot {.smaller}
+
+```{r fig.height=4.5}
+
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy))
+
+
+```
+
+### Now.  Make your first ggplot: hwy vs. cyl.  
+
+
+
+## hwy vs. cyl {.smaller}
+
+
+```{r fig.height=4}
+p <- ggplot(data = mpg) 
+
+p + geom_point(mapping = aes(x = cyl, y = hwy))
+
+
+```
+
+
+## Add a new dimension   {.smaller}
+
+The gas mileage data has more dimensions then just hwy, cyl, and displ.
+
+Let's add class as a dimension in our plot by mapping class to color.
+
+```{r fig.height=4.5}
+p + geom_point(mapping = aes(x =  displ, y = hwy, color = class))
+```
+
+ggplot has other mapping options:  shape, size, alpha, 
+
+
+## Go back to cyl  {.smaller}
+
+```{r fig.height=4.5}
+p + geom_point(mapping = aes(x =  displ, y = hwy, color = cyl))
+```
+
+Problem: cyl is a continuous variable that takes only 4 values:  4, 5, 6, 8
+
+
+## Fix it {.smaller}
+```{r fig.height=4.5}
+mpg$cyl <- as.factor(mpg$cyl)
+
+p <- ggplot(data = mpg)
+p +  geom_point(mapping = aes(x =  displ, y = hwy, color = cyl))
+
+```
+
+
+
+
+
+## Setting color or shape or size, but not mapping? {.smaller}
+
+```{r fig.height= 5}
+
+p + geom_point(mapping = aes(x = displ, y = hwy), color = "red", shape = 22, size = 1)
+
+```
+
+
+
+
+## Facets for visual Comparisons
+
+```{r fig.height=4.5}
+
+p + 
+  geom_point(mapping = aes(x = displ, y = hwy)) +
+  facet_wrap( ~ class, nrow = 2)
+
+```
+
+
+## Geometric objects: smooth {.smaller}
+
+
+```{r}
+
+p + 
+  geom_point(mapping = aes(x = displ, y = hwy)) +
+  geom_smooth(mapping = aes(x = displ, y = hwy))
+
+```
+
+
+
+## Smooths for subsets {.smaller}
+
+```{r}
+
+
+p + 
+  geom_smooth(mapping = aes(x = displ, y = hwy, linetype = drv))
+
+```
+
+
+## Bar charts: transformations
+
+```{r fig.align = 'left', fig.height = 3, fig.width=3, echo = FALSE}
+ggplot(data = diamonds) + geom_bar(mapping = aes(x = cut))
+```
+
+```{r fig.align = 'right', fig.height = 3, fig.width=3, echo = FALSE}
+ggplot(data = diamonds) + stat_count(mapping = aes(x = cut))
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
