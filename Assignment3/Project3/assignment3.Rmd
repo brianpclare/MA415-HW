@@ -1,11 +1,7 @@
 ---
 title: "MA415 Project One"
 author: "Lin Li, Lingjia Zhang, Zirui Liu"
-output:
-  html_document: default
-  pdf_document:
-    keep_tex: yes
-    latex_engine: xelatex
+output: pdf_document
 ---
 
 ## Background
@@ -14,9 +10,9 @@ According to the CNN news, apprehensions at the US-Mexico border reached the his
 
 # Data Visualization
 
-```{r, echo=FALSE}
-T2010 <- read.csv("/Users/mac/Desktop/MA415/assignment3/bp appre 2010.csv")
-T2017 <- read.csv("/Users/mac/Desktop/MA415/assignment3/bp appre 2017.csv")
+```{r}
+T2010 <- read.csv("/Users/eileen/Desktop/MA415/assignment3/bp appre 2010.csv")
+T2017 <- read.csv("/Users/eileen/Desktop/MA415/assignment3/bp appre 2017.csv")
 
 rownames(T2010) <- T2010[,1]
 rownames(T2017) <- T2017[,1]
@@ -160,7 +156,7 @@ From t-test, we get p-value = 0.3454 > 0.05, and we fail to reject the null hypo
 ## Time series
 
 ```{r,echo=FALSE}
-ts1 <- read.csv("/Users/mac/Desktop/MA415/assignment3/PB monthly summaries.csv")
+ts1 <- read.csv("/Users/eileen/Desktop/MA415/assignment3/PB monthly summaries.csv")
 #delete first column
 ts2 <- ts1[2:13]
 #rearrange the columns by moving Oct, Nov, and Dec to the end 
