@@ -1,0 +1,12 @@
+name: Assignment3
+title: Assignment3
+username:
+account: eileenli
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 287056
+bundleId: 1235690
+url: https://eileenli.shinyapps.io/Assignment3/
+when: 1519331749.35821
+asMultiple: FALSE
+asStatic: FALSE

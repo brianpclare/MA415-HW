@@ -11,8 +11,8 @@ According to the CNN news, apprehensions at the US-Mexico border reached the his
 # Data Visualization
 
 ```{r}
-T2010 <- read.csv("/Users/eileen/Desktop/MA415/assignment3/bp appre 2010.csv")
-T2017 <- read.csv("/Users/eileen/Desktop/MA415/assignment3/bp appre 2017.csv")
+T2010 <- read.csv("bp appre 2010.csv")
+T2017 <- read.csv("bp appre 2017.csv")
 
 rownames(T2010) <- T2010[,1]
 rownames(T2017) <- T2017[,1]
@@ -51,7 +51,7 @@ plot_by_months <- function(i){
   barplot(as.matrix(year), beside = T, col = c("red", "yellow"), bty="n",las=2,
           main = "Compare Apprehensions Between 2010&2017 by Months")
   legend("topright", 
-         c(paste(sector[i] ,"2010"),paste(sector[i],"2017")), 
+         c("Month Total 2010","Month Total 2017"),
          pch=15,  
          col=c("red","yellow"),  
          bty="n"
@@ -69,8 +69,7 @@ plot_by_sectors <- function(i){
           main = "Compare Apprehensions between 2010&2017 by Sectors"
           )
   legend("topleft", 
-         c(paste(month[i] ,"2010"),
-           paste(month[i],"2017")),
+         c("Sector Total 2010","Sector Total 2017"),
          pch=15,  
          col=c("red", "yellow"),  
          bty="n")
@@ -156,7 +155,7 @@ From t-test, we get p-value = 0.3454 > 0.05, and we fail to reject the null hypo
 ## Time series
 
 ```{r,echo=FALSE}
-ts1 <- read.csv("/Users/eileen/Desktop/MA415/assignment3/PB monthly summaries.csv")
+ts1 <- read.csv("PB monthly summaries.csv")
 #delete first column
 ts2 <- ts1[2:13]
 #rearrange the columns by moving Oct, Nov, and Dec to the end 
