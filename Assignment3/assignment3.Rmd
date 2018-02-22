@@ -1,7 +1,9 @@
 ---
 title: "MA415 Project One"
 author: "Lin Li, Lingjia Zhang, Zirui Liu"
-output: pdf_document
+output:
+  html_document: default
+  pdf_document: default
 ---
 
 ## Background
@@ -88,7 +90,7 @@ plot_by_months(10)
 
 Based on these two graphs, it is easy to conclude that in 2010, Tucson has the most apprehensions. In 2017, Rio Grande Valley has the most apprehensions. In 2010, from March to May, there are most apprehensions. In 2017, from October to December, there are most apprehensions.
 
-###### need website!!!!! ####
+To illustrate the problem and see the problem in a more dynamic way, we also build a shiny app and the website is: https://eileenli.shinyapps.io/Assignment3/.
 
 ## Statistic Analysis
 
