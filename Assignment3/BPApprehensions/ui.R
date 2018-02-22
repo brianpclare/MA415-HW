@@ -8,56 +8,66 @@
 #
 
 
+T2010 <- read.csv("/Users/mac/Desktop/MA415/assignment3/bp appre 2010.csv")
+T2017 <- read.csv("/Users/mac/Desktop/MA415/assignment3/bp appre 2017.csv")
 
-bp2010 <- read.csv("/Users/eileen/Desktop/MA415/assignment3/bp appre 2010.csv")
-bp2017 <- read.csv("/Users/eileen/Desktop/MA415/assignment3/bp appre 2017.csv")
+rownames(T2010) <- T2010[,1]
+rownames(T2017) <- T2017[,1]
 
+# sum apprehensions of sector and month in 2010
+T2010 <- subset(T2010, select = -c(Sector))
+# sort month in order 
+T2010 <- cbind(subset.data.frame(T2010)[,4:12],subset.data.frame(T2010)[,1:3])
+monthSum2010 <- colSums((T2010))
+T2010 <- rbind(T2010,monthSum2010)
+rownames(T2010)[10] <- "Sector Total"
 
-#add setor sums and smonth sums in 2010
-rownames(bp2010) <- bp2010[,1]
-bp2010 <- subset(bp2010, select = -c(Sector))
-sectorSum2010 <- rowSums(bp2010)
-monthSum2010 <- colSums((bp2010))
-bp2010 <- cbind(bp2010, sectorSum2010)
-bp2010 <- rbind(bp2010,monthSum2010)
+sectorSum2010 <- rowSums(T2010)
+T2010 <- cbind(T2010,sectorSum2010)
+colnames(T2010)[13] <- "Month Total" 
 
+# sum apprehensions of sector and month in 2017
+T2017 <- subset(T2017, select = -c(Sector))
+# sort month in order
+T2017 <- cbind(subset.data.frame(T2017)[,4:12],subset.data.frame(T2017)[,1:3])
+monthSum2017 <- colSums((T2017))
+T2017 <- rbind(T2017,monthSum2017)
+rownames(T2017)[10] <- "Sector Total"
 
-######## break line ########
-#add setor sums and smonth sums in 2017
-rownames(bp2017) <- bp2017[,1]
-bp2017 <- subset(bp2017, select = -c(Sector))
-sectorSum2017 <- rowSums(bp2010)
-monthSum2017 <- colSums((bp2017))
-bp2017 <- rbind(bp2017,monthSum2017)
-bp2017 <- cbind(bp2017, sectorSum2017)
+sectorSum2017 <- rowSums(T2017)
+T2017 <- cbind(T2017,sectorSum2017)
+colnames(T2017)[13] <- "Month Total" 
 
+#compare apprehensions by months
+sector <- rownames(T2010)
+month <- colnames(T2010)
 
-
-#input is the index of the sector you want to look up
-graph_months <- function(i){ 
-  comparison <- rbind(bp2010[i,1:12],bp2017[i,1:12])
-  barplot(as.matrix(comparison), beside = T, col = c("red", "yellow"), bty="n",las=2,
-          main = "Compare 2010 & 2017 Apprehensions by Months")
-  legend("topright", c("Month Total 2010","Month Total 2017"), 
+#The function takes in the index of the sector as input
+plot_by_months <- function(i){ 
+  year <- rbind(T2010[i,1:12],T2017[i,1:12])
+  barplot(as.matrix(year), beside = T, col = c("red", "yellow"), bty="n",las=2,
+          main = "Compare Apprehensions Between 2010&2017 by Months")
+  legend("topright", 
+         c(paste(sector[i] ,"2010"),paste(sector[i],"2017")), 
          pch=15,  
          col=c("red","yellow"),  
          bty="n"
   )
 }
 
-
-graph_sectors <- function(i){
-  bp2010<-t(bp2010)
-  bp2017<-t(bp2017)
-  comparison <- rbind(bp2010[i,1:9],bp2017[i,1:9])
-  barplot(comparison,
-          beside = TRUE, 
-          col = c("red", "yellow"), 
-          bty="n",
-          las=2,
-          main = "Compare 2010 & 2017 Apprehensions by Sectors"
+#The function takes in month as input
+plot_by_sectors <- function(i){
+  T2010<-t(T2010)
+  T2017<-t(T2017)
+  year <- rbind(T2010[i,1:9],T2017[i,1:9])
+  getOption("scipen")
+  opt <- options("scipen" = 20)
+  barplot(year, beside = TRUE, col = c("red", "yellow"), bty="n",las=2,
+          main = "Compare Apprehensions between 2010&2017 by Sectors"
   )
-  legend("topleft", c("Sector Total 2010","Sector Total 2017"),
+  legend("topleft", 
+         c(paste(month[i] ,"2010"),
+           paste(month[i],"2017")),
          pch=15,  
          col=c("red", "yellow"),  
          bty="n")
