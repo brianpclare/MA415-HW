@@ -140,24 +140,24 @@ rownames(T2017) &lt;- T2017[,1]
 T2010 &lt;- subset(T2010, select = -c(Sector))
 # sort month in order 
 T2010 &lt;- cbind(subset.data.frame(T2010)[,4:12],subset.data.frame(T2010)[,1:3])
-monthSum2010 &lt;- colSums((T2010))
-T2010 &lt;- rbind(T2010,monthSum2010)
+sum_m2010 &lt;- colSums((T2010))
+T2010 &lt;- rbind(T2010,sum_m2010)
 rownames(T2010)[10] &lt;- &quot;Sector Total&quot;
 
-sectorSum2010 &lt;- rowSums(T2010)
-T2010 &lt;- cbind(T2010,sectorSum2010)
+sum_s2010 &lt;- rowSums(T2010)
+T2010 &lt;- cbind(T2010,sum_s2010)
 colnames(T2010)[13] &lt;- &quot;Month Total&quot; 
 
 # sum apprehensions of sector and month in 2017
 T2017 &lt;- subset(T2017, select = -c(Sector))
 # sort month in order
 T2017 &lt;- cbind(subset.data.frame(T2017)[,4:12],subset.data.frame(T2017)[,1:3])
-monthSum2017 &lt;- colSums((T2017))
-T2017 &lt;- rbind(T2017,monthSum2017)
+sum_m2017 &lt;- colSums((T2017))
+T2017 &lt;- rbind(T2017,sum_m2017)
 rownames(T2017)[10] &lt;- &quot;Sector Total&quot;
 
-sectorSum2017 &lt;- rowSums(T2017)
-T2017 &lt;- cbind(T2017,sectorSum2017)
+sum_s2017 &lt;- rowSums(T2017)
+T2017 &lt;- cbind(T2017,sum_s2017)
 colnames(T2017)[13] &lt;- &quot;Month Total&quot; 
 
 #compare apprehensions by months
@@ -217,11 +217,11 @@ most_2017 &lt;- match(max(T2017[1:9,13]), T2017[1:9,13])
 rownames(T2017)[most_2017]</code></pre>
 <pre><code>## [1] &quot;Rio Grande Valley&quot;</code></pre>
 <p>To evaluate wheter the most apprehensions between 2010(Tucson) and 2017(Rio Grande Valley),we have following null hypothesis and alternative hypothesis:</p>
-<p><span class="math display">\[H_{0}:\mu _{Tucson, 2010} - \mu _{RGV, 2017} = 0\]</span> <span class="math display">\[H_{a}:\mu _{Tucson, 2010} - \mu _{RGV, 2017} \neq  0\]</span></p>
+<p><span class="math display">\[H_{0}:\mu _{T, 2010} - \mu _{R, 2017} = 0\]</span> <span class="math display">\[H_{a}:\mu _{T, 2010} - \mu _{R, 2017} \neq  0\]</span></p>
 <pre><code>## 
 ##  Welch Two Sample t-test
 ## 
-## data:  T2010_Tuson and T2017_RGV
+## data:  T2010_T and T2017_R
 ## t = 1.9547, df = 21.973, p-value = 0.06346
 ## alternative hypothesis: true difference in means is not equal to 0
 ## 95 percent confidence interval:
@@ -246,7 +246,7 @@ colnames(T2017)[top3_2017]</code></pre>
 <pre><code>## 
 ##  Welch Two Sample t-test
 ## 
-## data:  T2010_3m and T2017_3m
+## data:  T2010_three_months and T2017_three_months
 ## t = -5.9857, df = 11.05, p-value = 0.00008944
 ## alternative hypothesis: true difference in means is not equal to 0
 ## 95 percent confidence interval:
