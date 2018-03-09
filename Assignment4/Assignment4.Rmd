@@ -1,0 +1,201 @@
+---
+title: "Assignment 4"
+author: "Zirui Liu"
+date: "3/3/2018"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+reference: https://jrnold.github.io/r4ds-exercise-solutions/tibbles.html
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## 10.5.1
+How can you tell if an object is a tibble? (Hint: try printing mtcars, which is a regular data frame).
+
+```{r, include=FALSE}
+library(tidyverse)
+```
+We can check if a obect is a tibble by calling class() function. as_tibble() funciton makes an object a tibble.
+```{r, echo=TRUE}
+mtcars
+class(mtcars)
+class(as_tibble(mtcars))
+```
+
+## 10.5.2
+Compare and contrast the following operations on a data.frame and equivalent tibble. What is different? Why might the default data frame behaviours cause you frustration?
+
+```{r, echo=TRUE}
+# data frame will do partial matching
+df <- data.frame(abc = 1, xyz = "a")
+df$x
+# data frame returns a factor
+df[, "xyz"]
+# returns data frame
+df[, c("abc", "xyz")]
+
+# tibble doesn't do partial matching
+dftibble <- as_tibble(df)
+# tibble returns a data frame
+dftibble[, "xyz"]
+# tibble put class name on top of each column
+dftibble[, c("abc", "xyz")]
+```
+
+The default data frame behaviours may cause frustration becacause it is not the desired output we want.
+
+## 10.5.3
+If you have the name of a variable stored in an object, e.g. var <- "mpg", how can you extract the reference variable from a tibble?
+
+```{r, echo=TRUE}
+dt <- as_tibble(data.frame(mpg = 1, mbg = "a"))
+##  double bracket will do the job
+var <- "mpg"
+dt[[var]]
+```
+
+## 10.5.4
+Practice referring to non-syntactic names in the following data frame by:
+a. Extracting the variable called 1.
+
+b. Plotting a scatterplot of 1 vs 2.
+
+c. Creating a new column called 3 which is 2 divided by 1.
+
+d. Renaming the columns to one, two and three.
+```{r}
+annoying <- tibble(
+  `1` = 1:10,
+  `2` = `1` * 2 + rnorm(length(`1`))
+)
+
+#a
+annoying$`1`
+#b
+ggplot(annoying, aes(x = `1`, y = `2`)) + geom_point()
+#c
+temp <- annoying$`2` / annoying$`1`
+annoying[["3"]] <- annoying$`2` / annoying$`1`
+#d
+annoying <- rename(annoying, one = `1`, two = `2`, three = `3`)
+glimpse(annoying)
+```
+
+
+## 10.5.5
+What does tibble::enframe() do? When might you use it?
+
+enframe() converts named atomic vectors or lists to two-column data frames. For unnamed vectors, the natural sequence is used as name column. enframe(x, name = "name", value = "value") is the input format. We might want to use enframe() to store data with key and value combination.
+
+```{r}
+enframe(1:3)
+enframe(c(a = 5, b = 7))
+```
+
+## 10.5.6
+What option controls how many additional column names are printed at the footer of a tibble?
+
+print.tbl_df function can be used. We are able to print as many additional column names as we want.
+
+```{r}
+?print.tbl_df
+print(as_tibble(mtcars), n = 3)
+```
+
+```{r}
+who1 <- who %>% 
+  gather(new_sp_m014:newrel_f65, key = "key", value = "cases", na.rm = TRUE)
+who1
+who1 %>% 
+  count(key)
+who2 <- who1 %>% 
+  mutate(key = stringr::str_replace(key, "newrel", "new_rel"))
+who2
+who3 <- who2 %>% 
+  separate(key, c("new", "type", "sexage"), sep = "_")
+who3
+who3 %>% 
+  count(new)
+who4 <- who3 %>% 
+  select(-new, -iso2, -iso3)
+who5 <- who4 %>% 
+  separate(sexage, c("sex", "age"), sep = 1)
+who5
+who %>%
+  gather(code, value, new_sp_m014:newrel_f65, na.rm = TRUE) %>% 
+  mutate(code = stringr::str_replace(code, "newrel", "new_rel")) %>%
+  separate(code, c("new", "var", "sexage")) %>% 
+  select(-new, -iso2, -iso3) %>% 
+  separate(sexage, c("sex", "age"), sep = 1)
+```
+
+## 12.6.1
+In this case study I set na.rm = TRUE just to make it easier to check that we had the correct values. Is this reasonable? Think about how missing values are represented in this dataset. Are there implicit missing values? What’s the difference between an NA and zero?
+
+It is reasonale to set na.rm = TRUE because there are missing values in our data. We need to exclude missing values in order to do further evaluation. Missing values are excluded in this dataset. NA and zero are different. NA represents missing value, but 0 represents the actual value 0.
+
+```{r}
+who1 %>%
+  filter(cases == 0) %>%
+  nrow()
+
+gather(who, new_sp_m014:newrel_f65, key = "key", value = "cases") %>%
+  group_by(country, year)  %>%
+  mutate(missing = is.na(cases)) %>%
+  select(country, year, missing) %>%
+  distinct() %>%
+  group_by(country, year) %>%
+  filter(n() > 1)
+```
+
+## 12.6.2
+What happens if you neglect the mutate() step? (mutate(key = stringr::str_replace(key, "newrel", "new_rel")))
+
+mutate() step helps us to replace "newrel"" with "new_rel". These two names "newrel" and "new_rel" refer to exactly same thing. However, if we replace "newrel" with "new_rel", it will make the code more consistent.
+
+## 12.6.3
+I claimed that iso2 and iso3 were redundant with country. Confirm this claim.
+```{r}
+select(who1, country, iso2, iso3) %>%
+  distinct() %>%
+  group_by(country) %>%
+  filter(n() > 1)
+
+select(who3, country, iso2) %>%
+  distinct() %>%
+  group_by(country) %>%
+  filter(n() > 1)
+
+
+select(who3, country, iso3) %>%
+  distinct() %>%
+  group_by(country) %>%
+  filter(n() > 1)
+
+#> # A tibble: 0 x 3
+#> # Groups:   country [0]
+#> # ... with 3 variables: country <chr>, iso2 <chr>, iso3 <chr>
+
+```
+iso2 and iso3 were redundant with country. Variables country, iso2, iso3 have the same occurences. We only need one of them and the variables are redundant.
+
+## 12.6.4
+For each country, year, and sex compute the total number of cases of TB. Make an informative visualisation of the data.
+
+```{r}
+who5 %>%
+  group_by(country, year, sex) %>%
+  filter(year > 1995) %>%
+  summarise(cases = sum(cases)) %>%
+  unite(country_sex, country, sex, remove = FALSE) %>%
+  ggplot(aes(x = year, y = cases, group = country_sex, colour = sex)) +
+  geom_line()
+```
+
+Years are chosed after 1995. We have plotted the grpah in interms of numbers of cases in different countries.
+
+
