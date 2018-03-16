@@ -1,0 +1,52 @@
+---
+title: "Assignment4_part2"
+author: "Zirui Liu"
+date: "3/16/2018"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(knitr)
+library(stringr)
+library(foreign)
+library(plyr)
+library(reshape2)
+source("pew.R")
+part1 <- raw
+source("billboard.R")
+```
+
+## Table 4 -> Table 6
+### Table 4
+```{r table4, ech=T}
+part1[1:10, 1:7]
+```
+For table4, we omit three columns: $75-100k, $100-150k and $>150k. The rows are religion and incomes.
+
+### Table 6
+```{r table6, echo=T}
+tb6 <- as.tibble(part1)
+tb6%>% gather(-religion, key = "income", value = "frequency") %>% arrange(religion) %>% head(n=20)
+```
+For table6, the rows are religion names, income range and frequency. There are only 20 rows shown.
+
+## Table 7 -> Table 8
+### Table 7
+```{r table7, echo=T}
+raw[c(1:3, 6:10), 1:8]
+```
+For table7, it only includes top 8 hits for 2000 on Billboard.
+
+### Table 8
+```{r table8, echo = T}
+table7 <- as.tibble(raw)
+table8 <- table7 %>% gather(key= "week", value= "rank", -year, -artist, -track, -time, -date.entered ) %>%
+  arrange(artist) %>%
+  select(year,artist, time, track, date=date.entered, week, rank) %>%
+  filter(!is.na(rank))
+head(table8,n=20)
+```
+For table8, it has date columns. Weeks and ranks are new columns listed for each song. There are only 20 rows shown.
+

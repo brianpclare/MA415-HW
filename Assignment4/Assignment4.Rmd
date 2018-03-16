@@ -199,3 +199,11 @@ who5 %>%
 Years are chosed after 1995. We have plotted the grpah in interms of numbers of cases in different countries.
 
 
+
+
+
+
+
+
+
+
