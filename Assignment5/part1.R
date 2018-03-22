@@ -1,7 +1,7 @@
 ---
 title: "part1"
-author: "Zirui Liu"
-date: "3/21/2018"
+author: "Zirui Liu, Lingjia Zhang, Lin Li"
+date: "3/18/2018"
 ---
   
 ## There is no data for station 46035 in 2013. Some temperture data is 999.

@@ -1,7 +1,7 @@
 ---
 title: "part2"
-author: "Zirui Liu"
-date: "3/21/2018"
+author: "Zirui Liu, Lingjia Zhang, Lin Li"
+date: "3/18/2018"
 ---
 
 library(tidyverse)
